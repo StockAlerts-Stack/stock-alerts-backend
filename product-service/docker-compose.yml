@@ -1,0 +1,63 @@
+version: '3.8'
+
+services:
+  product-service:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: product-service
+    ports:
+      - "8081:8081"
+    environment:
+      # Database Configuration
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres-db:5432/stock_db
+      SPRING_DATASOURCE_USERNAME: admin
+      SPRING_DATASOURCE_PASSWORD: adminpassword
+      
+      # JPA Configuration
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+      SPRING_JPA_SHOW_SQL: "true"
+      
+      # Application Configuration
+      SPRING_APPLICATION_NAME: product-service
+      
+      # Actuator Configuration
+      MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE: health,info,prometheus
+      MANAGEMENT_ENDPOINT_HEALTH_SHOW_DETAILS: always
+    
+    # Health check to ensure database is ready
+    healthcheck:
+      test: ["CMD-SHELL", "wget --no-verbose --tries=1 --spider http://localhost:8081/actuator/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 60s
+    
+    # Wait for dependencies to be healthy
+    depends_on:
+      postgres-db:
+        condition: service_healthy
+    
+    # Resource limits
+    deploy:
+      resources:
+        limits:
+          memory: 600M
+          cpus: '1.0'
+        reservations:
+          memory: 256M
+          cpus: '0.5'
+    
+    # Restart policy
+    restart: unless-stopped
+    
+    # Connect to external network shared with infrastructure services
+    networks:
+      - stock-alert-network
+
+# Define external network
+# This network must be created beforehand or defined in the infrastructure docker-compose
+networks:
+  stock-alert-network:
+    external: true
+    name: stock-alert-network
