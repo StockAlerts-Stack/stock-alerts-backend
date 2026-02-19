@@ -1,0 +1,22 @@
+spring:
+  cloud:
+    gateway:
+      routes:
+        - id: product-service
+          uri: http://localhost:8081
+          predicates:
+            - Path=/api/products/**
+          filters:
+            - StripPrefix=1
+        - id: inventory-service
+          uri: http://localhost:8082
+          predicates:
+            - Path=/api/inventory/**
+          filters:
+            - StripPrefix=1
+        - id: alert-service
+          uri: http://localhost:8083
+          predicates:
+            - Path=/api/alerts/**
+          filters:
+            - StripPrefix=1
