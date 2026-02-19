@@ -1,0 +1,34 @@
+# Build outputs
+target/
+!target/*.jar
+
+# IDE files
+.idea/
+*.iml
+.vscode/
+.settings/
+.classpath
+.project
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Git
+.git/
+.gitignore
+
+# Documentation
+README.md
+HELP.md
+
+# Logs
+*.log
+
+# Test files
+src/test/
+
+# Maven wrapper (optional - uncomment if you don't want to include it)
+# .mvn/
+# mvnw
+# mvnw.cmd
